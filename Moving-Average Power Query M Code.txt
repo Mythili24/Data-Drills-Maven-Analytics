@@ -1,0 +1,31 @@
+50-Day-Moving-Average M Code
+
+let
+    Source = Excel.CurrentWorkbook(){[Name="SPY_Close_Price"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Date", type date}, {"Close", type number}}),
+    #"Added Index" = Table.AddIndexColumn(#"Changed Type", "Index", 1, 1, Int64.Type),
+    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "Date", "Close"}),
+    #"Added Custom" = Table.AddColumn(#"Reordered Columns", "ValueList", each #"Reordered Columns"[Close]),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Range50", each if ([Index] < 50) then "" else List.Range([ValueList],  _[Index] - 50, 50)),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "50-Day-MovingAverage", each if [Range50] = "" then [Close] else List.Average([Range50])),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom2",{"Index", "ValueList", "Range50"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"50-Day-MovingAverage", Currency.Type}, {"Close", Currency.Type}})
+in
+    #"Changed Type1"
+
+______________________________________________________________________________________________
+
+200-Day-Moving-Average M Code
+
+let
+    Source = Excel.CurrentWorkbook(){[Name="SPY_Close_Price"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Date", type date}, {"Close", type number}}),
+    #"Added Index" = Table.AddIndexColumn(#"Changed Type", "Index", 1, 1, Int64.Type),
+    #"Reordered Columns" = Table.ReorderColumns(#"Added Index",{"Index", "Date", "Close"}),
+    #"Added Custom" = Table.AddColumn(#"Reordered Columns", "ValueList", each #"Reordered Columns"[Close]),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Range200", each if ([Index] < 200) then "" else List.Range([ValueList],  _[Index] - 200, 200)),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "200-Day-MovingAverage", each if [Range200] = "" then [Close] else List.Average([Range200])),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom2",{"Index", "ValueList", "Range200"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"200-Day-MovingAverage", Currency.Type}, {"Close", Currency.Type}})
+in
+    #"Changed Type1"
